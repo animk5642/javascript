@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+  <hEAD>
+     <title>boolean </title>
+      <style>
+
+      </style>
+
+  
+
+  </hEAD>
+
+<body>
+<script>
+
+ convertTemperature(25,'C')
+  
+ function convertToFahrenheit(Celsius)
+ {
+  let f = (Celsius * 9/5)+32;
+   return f;
+
+ }
+ 
+ function convertToCelsius(fahrenheit)
+ {
+  let Celsius =(fahrenheit - 32)* (5/9);
+   
+
+   return Celsius;
+ }
+
+
+function convertTemperature(degree,unit)
+ {
+    if(unit === 'C')
+    {
+        let converted=convertToFahrenheit(degree);
+        console.log(converted);
+    }
+    else 
+    {
+        let converted=convertToCelsius(degree);
+        console.log(converted);
+    }
+    }
+ 
+
+ 
+
+</script>
+
+
+
+
+</body>
+
+
+
+
+
+</html>

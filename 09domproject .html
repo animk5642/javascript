@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+  <hEAD>
+     <title>Dom project  </title>
+      <style>
+
+      </style>
+
+  
+
+  </hEAD>
+
+<body>
+
+  <p> YouTube Subscribe Button</p>
+  <button class ="sub" onclick=" subscribe();"> Subscribe    </button>
+
+  <p>Amazon Shipping Calculator </p>
+  <p>Orders under$40 = +$10 shipping</p>
+
+
+  <input type="text" placeholder="enter the cost" class ="js-text">
+  <button onclick=" Calculate();">Calculate</button>
+  <P class="cost"></P>
+<script>
+
+
+
+function Calculate()
+{
+ const inputElement=document.querySelector('.js-text');
+ const display=document.querySelector('.cost');
+let text =Number(inputElement.value); 
+if(text<40)
+{
+    text = text+10;
+}
+
+}
+function subscribe()
+{
+        const subs= document.querySelector('.sub')
+if(subs.innerText=== 'Subscribe')
+{
+
+subs.innerText='Subscribed'
+
+}
+else
+
+{
+subs.innerHTML='Subscribe'
+}
+
+}
+</script>
+
+
+
+
+</body>
+
+
+
+
+
+</html>

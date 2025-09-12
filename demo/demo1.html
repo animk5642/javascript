@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Chat App</title>
+    <!-- Use Tailwind CSS for modern, responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a;
+        }
+        .main-container {
+            transition: opacity 0.5s ease-in-out;
+        }
+        .video-container {
+            position: relative;
+            background-color: #333;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            aspect-ratio: 16/9; /* Maintain a consistent aspect ratio */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #9ca3af;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen text-white">
+    <!-- Welcome Screen: Initial view to join a meeting -->
+    <div id="welcome-screen" class="main-container max-w-lg w-full p-8 rounded-2xl shadow-xl bg-[#262626] flex flex-col items-center">
+        <h1 class="text-3xl font-bold mb-6 text-center">Join a Meeting</h1>
+        <div class="w-full mb-6">
+            <input id="room-name-input" type="text" placeholder="Enter room name"
+                   class="w-full p-3 rounded-xl bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <button id="join-button"
+                class="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg transition duration-300 ease-in-out">
+            Join Meeting
+        </button>
+    </div>
+
+    <!-- Meeting Screen: Main view with video and controls -->
+    <div id="meeting-screen" class="hidden main-container w-full h-screen flex flex-col p-4 sm:p-8">
+        <!-- Main Content Area -->
+        <div class="flex-grow flex flex-col lg:flex-row gap-4">
+            <!-- Left Panel: Main Videos -->
+            <div class="flex-grow flex flex-col gap-4">
+                <div id="local-video-container" class="video-container flex-1">
+                    Your Video
+                </div>
+                <div id="remote-video-container" class="video-container flex-1">
+                    Remote Participant
+                </div>
+            </div>
+
+            <!-- Right Panel: New Features -->
+            <div class="w-full lg:w-96 flex flex-col gap-4 bg-[#262626] p-4 rounded-2xl shadow-xl">
+                <!-- Real-time Voice Translation -->
+                <div class="bg-gray-700 p-4 rounded-xl">
+                    <h2 class="text-lg font-semibold mb-2">Voice Translation</h2>
+                    <textarea id="translation-input" placeholder="Speak or type a message to translate..."
+                              class="w-full h-24 p-2 rounded-lg bg-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"></textarea>
+                    <button id="translate-button" class="w-full py-2 bg-purple-600 hover:bg-purple-700 rounded-lg font-medium transition duration-300">
+                        Translate
+                    </button>
+                    <p id="translation-output" class="mt-2 text-sm text-gray-300 italic"></p>
+                </div>
+
+                <!-- Sign Language to Text Conversion -->
+                <div class="bg-gray-700 p-4 rounded-xl">
+                    <h2 class="text-lg font-semibold mb-2">Sign Language to Text</h2>
+                    <div id="sign-language-video" class="video-container aspect-video mb-2">
+                        Sign Language Video Feed
+                    </div>
+                    <p id="sign-language-output" class="text-sm text-gray-300 italic">Ready to detect sign language...</p>
+                    <button id="sign-language-button" class="w-full py-2 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition duration-300 mt-2">
+                        Start Detection
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meeting Controls and Status -->
+        <div class="flex justify-center items-center mt-6">
+            <div class="flex items-center space-x-4 p-4 rounded-full bg-[#262626] shadow-xl">
+                <!-- Mute/Unmute Button -->
+                <button id="mic-button" class="p-3 bg-gray-700 hover:bg-gray-600 rounded-full transition duration-300">
+                    <svg id="mic-on-icon" class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 14c-1.66 0-3-1.34-3-3V5c0-1.66 1.34-3 3-3s3 1.34 3 3v6c0 1.66-1.34 3-3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                    </svg>
+                    <svg id="mic-off-icon" class="w-6 h-6 text-red-500 hidden" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 11h-1.7c0 .7-.13 1.38-.35 2.02l1.52 1.52c.24-.62.4-1.29.4-1.99zm-4.14-6.88l-2.02-2.02A3.996 3.996 0 0 0 12 2c-.42 0-.82.08-1.2.22l2.36 2.36c.22-.05.45-.08.68-.08zm-2.07 10.15l2.76 2.76c-.53.13-1.1.19-1.69.19-2.76 0-5-2.24-5-5h-2c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c.61-.09 1.18-.28 1.72-.53L12 14.27zm6.75 3.3l-5.74-5.74V11c0-2.76-2.24-5-5-5-.42 0-.82.08-1.2.22l-2.04-2.04C6.18 3.3 8.94 2 12 2c3.27 0 6.09 2.05 7.41 4.9L19 7v4h2v2h-2v3.75l2.03 2.03.71-.71zM4.27 3L3 4.27l9 9V14c1.66 0 3-1.34 3-3h2c0 3.53-2.61 6.43-6 6.92V21h-2v-3.08c-2.37-.36-4.27-2.15-4.74-4.43L4.27 3z"/>
+                    </svg>
+                </button>
+
+                <!-- Camera On/Off Button -->
+                <button id="camera-button" class="p-3 bg-gray-700 hover:bg-gray-600 rounded-full transition duration-300">
+                    <svg id="camera-on-icon" class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M18 10.48V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-4.48l4 3.98v-11l-4 3.98zM16 18H4V6h12v12z"/>
+                    </svg>
+                    <svg id="camera-off-icon" class="w-6 h-6 text-red-500 hidden" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M10.5 10.5c.95-.95 2.17-1.46 3.5-1.46 1.8 0 3.4.95 4.33 2.37L19 10.48V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 .28.06.55.16.81l1.5-1.5c-.09-.24-.16-.5-.16-.81V6h12l-1.5-1.5c-.32.32-.67.62-1.07.88L14.5 9.5zm-2.06 6.08c-1.79.03-3.41-1.01-4.22-2.52L1.87 11c-.04-.15-.07-.3-.07-.48V12c0 1.1.9 2 2 2h1.52l1.52 1.52c.87.87 2.11 1.48 3.52 1.48zM17 10.48l-1.37-1.37c-.36-.36-.78-.65-1.22-.89L17 7.5V10.48zM10.51 14.5l-2.73-2.73 1.37-1.37 2.73 2.73-1.37 1.37zm-6.23 6.22l2.03-2.03c.53.25 1.12.44 1.76.54l-2.12 2.12zm15.18-2.54l-2.04-2.04c-.2.2-.42.38-.66.56l2.04 2.04c.24-.18.46-.36.66-.56zm-.43-1.6l-5.74-5.74L4.27 3 3 4.27l9 9v.01c-.13.36-.21.75-.27 1.15l-1.52 1.52-2.73-2.73-1.37 1.37 2.73 2.73 1.37 1.37 3.32 3.32 1.41-1.41-1.5-1.5L20 20.73z"/>
+                    </svg>
+                </button>
+
+                <!-- Leave Meeting Button -->
+                <button id="leave-button" class="p-3 bg-red-600 hover:bg-red-700 rounded-full transition duration-300">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 21c-4.97 0-9-4.03-9-9s4.03-9 9-9 9 4.03 9 9-4.03 9-9 9zm-2.5-8.5c.28 0 .5-.22.5-.5V8c0-.28-.22-.5-.5-.5s-.5.22-.5.5v4.5c0 .28.22.5.5.5zm4 0c.28 0 .5-.22.5-.5V8c0-.28-.22-.5-.5-.5s-.5.22-.5.5v4.5c0 .28.22.5.5.5zm-2.5 4c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="status-message" class="text-center mt-4 text-gray-400 font-medium"></div>
+    </div>
+    
+    <!-- Custom Modal for Alerts -->
+    <div id="alert-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden">
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg max-w-sm w-full">
+            <h3 class="text-xl font-bold text-white mb-2" id="alert-title"></h3>
+            <p class="text-gray-300 mb-4" id="alert-message"></p>
+            <div class="flex justify-end">
+                <button id="alert-close-button" class="py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Placeholder for firebase variables
+        const __initial_auth_token = "";
+        const __app_id = "";
+        const __firebase_config = "";
+
+        // Custom alert function to replace window.alert()
+        function showAlert(title, message) {
+            const modal = document.getElementById('alert-modal');
+            document.getElementById('alert-title').textContent = title;
+            document.getElementById('alert-message').textContent = message;
+            modal.classList.remove('hidden');
+        }
+
+        document.getElementById('alert-close-button').addEventListener('click', () => {
+            document.getElementById('alert-modal').classList.add('hidden');
+        });
+
+        // UI Elements
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const meetingScreen = document.getElementById('meeting-screen');
+        const joinButton = document.getElementById('join-button');
+        const leaveButton = document.getElementById('leave-button');
+        const micButton = document.getElementById('mic-button');
+        const cameraButton = document.getElementById('camera-button');
+        const micOnIcon = document.getElementById('mic-on-icon');
+        const micOffIcon = document.getElementById('mic-off-icon');
+        const cameraOnIcon = document.getElementById('camera-on-icon');
+        const cameraOffIcon = document.getElementById('camera-off-icon');
+        const roomNameInput = document.getElementById('room-name-input');
+        const statusMessage = document.getElementById('status-message');
+        const translationInput = document.getElementById('translation-input');
+        const translateButton = document.getElementById('translate-button');
+        const translationOutput = document.getElementById('translation-output');
+        const signLanguageButton = document.getElementById('sign-language-button');
+        const signLanguageOutput = document.getElementById('sign-language-output');
+
+        let isMicMuted = false;
+        let isCameraOff = false;
+
+        // --- Main App Logic ---
+
+        // Function to simulate joining a meeting
+        function joinMeeting() {
+            const roomName = roomNameInput.value.trim();
+            if (roomName === "") {
+                showAlert("Error", "Please enter a room name to join.");
+                return;
+            }
+
+            // Simulate the transition from welcome to meeting screen
+            welcomeScreen.classList.add('opacity-0');
+            setTimeout(() => {
+                welcomeScreen.classList.add('hidden');
+                meetingScreen.classList.remove('hidden');
+                meetingScreen.classList.add('opacity-100');
+                statusMessage.textContent = `Connecting to room: ${roomName}...`;
+
+                // Simulate fetching media and connecting to a peer
+                setTimeout(() => {
+                    statusMessage.textContent = "You are now in the meeting. Waiting for another user...";
+                    
+                    setTimeout(() => {
+                        statusMessage.textContent = "Another participant has joined the call.";
+                    }, 3000); // Wait 3 seconds for the "remote" user
+                }, 2000); // Wait 2 seconds to simulate media fetching
+            }, 500); // Wait 0.5s for the fade-out effect
+        }
+
+        // Function to leave the meeting
+        function leaveMeeting() {
+            meetingScreen.classList.add('opacity-0');
+            setTimeout(() => {
+                meetingScreen.classList.add('hidden');
+                welcomeScreen.classList.remove('hidden');
+                welcomeScreen.classList.remove('opacity-0');
+                roomNameInput.value = ''; // Clear the input
+                statusMessage.textContent = ''; // Clear the status
+            }, 500);
+        }
+
+        // Toggle microphone state
+        function toggleMic() {
+            isMicMuted = !isMicMuted;
+            if (isMicMuted) {
+                micOnIcon.classList.add('hidden');
+                micOffIcon.classList.remove('hidden');
+            } else {
+                micOnIcon.classList.remove('hidden');
+                micOffIcon.classList.add('hidden');
+            }
+            statusMessage.textContent = `Microphone is now ${isMicMuted ? 'muted' : 'unmuted'}.`;
+        }
+
+        // Toggle camera state
+        function toggleCamera() {
+            isCameraOff = !isCameraOff;
+            if (isCameraOff) {
+                cameraOnIcon.classList.add('hidden');
+                cameraOffIcon.classList.remove('hidden');
+            } else {
+                cameraOnIcon.classList.remove('hidden');
+                cameraOffIcon.classList.add('hidden');
+            }
+            statusMessage.textContent = `Camera is now ${isCameraOff ? 'off' : 'on'}.`;
+        }
+
+        // --- New Feature Logic ---
+
+        // Function to translate text using the Gemini API
+        async function translateText() {
+            const textToTranslate = translationInput.value.trim();
+            if (!textToTranslate) {
+                showAlert("Translation Error", "Please enter some text to translate.");
+                return;
+            }
+
+            translationOutput.textContent = "Translating...";
+            const systemPrompt = "Translate the following English text to Spanish. Provide only the translated text.";
+            const userQuery = textToTranslate;
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                tools: [{ "google_search": {} }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                const candidate = result.candidates?.[0];
+
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    const translatedText = candidate.content.parts[0].text;
+                    translationOutput.textContent = translatedText;
+                } else {
+                    translationOutput.textContent = "Translation failed. No content in response.";
+                }
+            } catch (error) {u
+                translationOutput.textContent = `Translation failed: ${error.message}`;
+                console.error('Translation error:', error);
+            }
+        }
+
+        // Function to simulate sign language detection
+        function simulateSignLanguageDetection() {
+            signLanguageOutput.textContent = "Sign language detection is active. This feature requires advanced computer vision models and is currently simulated.";
+            // In a real application, you would integrate a machine learning model here
+            // to process the video feed and output translated text.
+        }
+        
+        // --- Event Listeners ---
+        joinButton.addEventListener('click', joinMeeting);
+        leaveButton.addEventListener('click', leaveMeeting);
+        micButton.addEventListener('click', toggleMic);
+        cameraButton.addEventListener('click', toggleCamera);
+        translateButton.addEventListener('click', translateText);
+        signLanguageButton.addEventListener('click', simulateSignLanguageDetection);
+    </script>
+</body>
+</html>

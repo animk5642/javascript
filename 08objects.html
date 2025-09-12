@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+  <hEAD>
+     <title>objects </title>
+      <style>
+
+      </style>
+
+  
+
+  </hEAD>
+
+<body>
+<script>
+  /*
+     const product = {
+      name: 'socks',
+      price:1090,
+   
+     };
+
+     console.log(product.size);
+     product.newsize = 10;
+      
+
+     delete product.newsize;
+
+     console.log(typeof product.price);
+    */
+   const product2 = //it is an object
+   {
+    name:'shirt',
+    ['delivery-time']:'1 day',
+    rating:{
+       stars:4.6,
+       count:86
+    },
+   ['fun']: function function1()//methods fun..function inside an object is called method
+
+    {
+      console.log('this is a function in side an obeject');
+    }
+    
+   };
+ console.log(product2['name']);
+  console.log(product2  ['delivery-time']);
+  console.log(product2.rating.stars); 
+    console.log(product2.rating.count); 
+       product2.fun();
+       console.log( JSON.stringify(product2));
+       
+       console.log('hello'.length);
+       console.log('hello'.toUpperCase());//auto boxing it convert evrything to object
+       const object1=//object is the refferences
+       {
+        message:'hello'
+       };
+       const object2 = object1;
+
+       const object3=
+       {
+            message:'hi',
+            data:1234
+
+       }
+          const mess='helloooooooo';
+       
+       let {message,data} = object3;//DESTRUCTURING
+      
+       const object5 = {
+        message//=message:message
+     
+       }
+       console.log(object5.message);
+         
+
+
+       
+       
+
+ 
+</script>>
+
+ 
+
+
+</body>
+
+
+
+
+
+</html>
