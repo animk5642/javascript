@@ -20,9 +20,15 @@
   <p>Orders under$40 = +$10 shipping</p>
 
 
-  <input type="text" placeholder="enter the cost" class ="js-text">
+  <input placeholder="enter the cost" class ="js-text"  onkeydown="console.log(event);
+  if(event.key ==='Enter')
+  
+  {
+    Calculate();
+
+  }">
   <button onclick=" Calculate();">Calculate</button>
-  <P class="cost"></P>
+  <P class="cost" ></P>
 <script>
 
 
@@ -35,6 +41,11 @@ let text =Number(inputElement.value);
 if(text<40)
 {
     text = text+10;
+    display.innerText=`$${text}`;
+}
+else
+{
+      display.innerText=`$${text}`;
 }
 
 }
