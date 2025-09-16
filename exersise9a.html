@@ -15,9 +15,28 @@
 
 
 <button class="button1">9a</button>
-<button class="button2" onclick="button2click();">9b</button>
+<button class="button2" onclick="button2click();">9b</button><br>
+<button  onclick=" choisee('head')"; class="head">head</button>
+<button   onclick=" choisee('tail')"class="tail">tail</button>
+<p class="para1"></p>
 
 <script>
+let para1=document.querySelector('.para1');
+function choisee(choices)
+{
+  if(choices==='head')
+{
+  para1.innerText=`You chose :${choices}`
+}
+else if(choices==='tail')
+
+{
+  para1.innerText=`You chose :${choices}`
+
+}
+}
+
+
 button2=document.querySelector('.button2');
 
 function button2click()
