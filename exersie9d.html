@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+  <hEAD>
+     <title>inputtype </title>
+      <style>
+
+      </style>
+
+  
+
+  </hEAD>
+
+<body>
+  <input   onkeydown="console.log(event)"  class="inputbox" type ="text">
+  <button  
+  
+  onclick = "select()
+  "
+ 
+  class="submitbutton">submit</button>
+
+  <p class ="para1"></p>
+
+
+
+<script>
+
+  function select()
+  {
+  let inputbox=document.querySelector('.inputbox');
+  console.log(inputbox.value);
+  }
+
+
+  
+  toprint=document.querySelector('.para1');
+  function printname()
+  {
+     toprint.innerText=`Your name is: Sherlock`
+  }
+
+</script>
+
+
+
+
+</body>
+
+
+
+
+
+</html>
